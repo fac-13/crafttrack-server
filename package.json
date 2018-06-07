@@ -1,0 +1,31 @@
+{
+  "name": "crafttrack-server",
+  "version": "1.0.0",
+  "description": "Server for craft-track project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fac-13/crafttrack-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fac-13/crafttrack-server/issues"
+  },
+  "homepage": "https://github.com/fac-13/crafttrack-server#readme",
+  "devDependencies": {
+    "supertest": "^3.1.0",
+    "tape": "^4.9.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.252.1",
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3"
+  }
+}
