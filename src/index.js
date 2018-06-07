@@ -15,6 +15,12 @@ app.listen(port, () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(function (_, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:1234");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Load the AWS SDK for Node.js
 const AWS = require("aws-sdk");
 // Set the region
@@ -48,10 +54,9 @@ app.get("/getItems", (req, res, next) => {
 });
 
 // // add new item to make
-// app.post("/postItem", (req, res, next) => {
-//   const params = req.body.newItem;
-//   ddb.putItem(params, (err, data) => {});
-// });
+app.post("/postItem", (req, res, next) => {
+  ddb.putItem(req.body, (err, data) => err ? res.status(500).json({ error: err.message }) : console.log("Successfully added data"));
+});
 
 // // update item status
 // app.put("/putItemStatus", (req, res, next) => {
