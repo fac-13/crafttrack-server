@@ -8,8 +8,11 @@
     "start:watch": "nodemon src/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:coverage": "jest --coverage"
   },
+  "pre-commit": [
+    "test:coverage"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fac-13/crafttrack-server.git"
@@ -22,8 +25,11 @@
   },
   "homepage": "https://github.com/fac-13/crafttrack-server#readme",
   "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-recommended": "^2.0.0",
     "jest": "^23.1.0",
     "nodemon": "^1.17.5",
+    "pre-commit": "^1.2.2",
     "supertest": "^3.1.0"
   },
   "dependencies": {
