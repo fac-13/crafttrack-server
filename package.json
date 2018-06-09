@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:watch": "nodemon src/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -19,8 +22,9 @@
   },
   "homepage": "https://github.com/fac-13/crafttrack-server#readme",
   "devDependencies": {
-    "supertest": "^3.1.0",
-    "tape": "^4.9.0"
+    "jest": "^23.1.0",
+    "nodemon": "^1.17.5",
+    "supertest": "^3.1.0"
   },
   "dependencies": {
     "aws-sdk": "^2.252.1",
