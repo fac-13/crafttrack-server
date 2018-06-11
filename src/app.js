@@ -61,17 +61,15 @@ app.post("/postItem", (req, res) => {
 
 app.delete("/deleteItem/:craftId", (req, res) => {
 	const params = {
-		TableName: "TABLE",
+		TableName: "Crafts",
 		Key: {
-			"KEY_NAME": { N: req.params.craftId }
+			"id": { N: req.params.craftId }
 		}
 	};
 	ddb.deleteItem(params, (err) => {
-		if (err) {
-			res.status(500).json({ error: err.message });
-		} else {
-			console.log("deleted item");
-		}
+		err
+			? res.status(500).json({ error: err.message })
+			: console.log("deleted item");
 	});
 });
 
