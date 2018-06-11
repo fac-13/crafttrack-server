@@ -14,14 +14,7 @@ app.use(function (_, res, next) {
 	next();
 });
 
-// HELLO ENDPOINT
-
-app.get("/", (req, res) => {
-	res.json({ message: "hello world"});
-});
-
 // DATABASE ENDPOINTS
-
 // Load the AWS SDK for Node.js
 const AWS = require("aws-sdk");
 // Set the region
@@ -54,7 +47,7 @@ app.get("/getItems", (req, res, next) => {
 	});
 });
 
-// // add new item to make
+// add new item to make
 app.post("/postItem", (req, res, next) => {
 	ddb.putItem(req.body, (err, data) => err ? res.status(500).json({ error: err.message }) : console.log("Successfully added data"));
 });
