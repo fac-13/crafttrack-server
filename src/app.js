@@ -54,7 +54,23 @@ app.post("/postItem", (req, res) => {
 			res.status(500).json({ error: err.message });
 		} else {
 			console.log("Successfully added data");
-			res.json({ msg: "success"});
+			res.json({ msg: "success" });
+		}
+	});
+});
+
+app.delete("/deleteItem/:craftId", (req, res) => {
+	const params = {
+		TableName: "TABLE",
+		Key: {
+			"KEY_NAME": { N: req.params.craftId }
+		}
+	};
+	ddb.deleteItem(params, (err) => {
+		if (err) {
+			res.status(500).json({ error: err.message });
+		} else {
+			console.log("deleted item");
 		}
 	});
 });
