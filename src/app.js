@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(function (_, res, next) {
-	res.header("Access-Control-Allow-Origin", "http://localhost:1234");
+	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
@@ -28,7 +28,7 @@ AWS.config.update({
 const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08" });
 
 // getItems route
-app.get("/getItems", (req, res, next) => {
+app.get("/getItems", (req, res) => {
 	const params = {
 		TableName: "Crafts"
 	};
@@ -48,8 +48,15 @@ app.get("/getItems", (req, res, next) => {
 });
 
 // add new item to make
-app.post("/postItem", (req, res, next) => {
-	ddb.putItem(req.body, (err, data) => err ? res.status(500).json({ error: err.message }) : console.log("Successfully added data"));
+app.post("/postItem", (req, res) => {
+	ddb.putItem(req.body, (err) => {
+		if (err) {
+			res.status(500).json({ error: err.message });
+		} else {
+			console.log("Successfully added data");
+			res.json({ msg: "success"});
+		}
+	});
 });
 
 // // update item status
