@@ -3,14 +3,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 
-
 // config middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(function (_, res, next) {
+app.use(function(_, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept"
+	);
 	res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
 	next();
 });
@@ -50,7 +52,32 @@ app.get("/getItems", (req, res) => {
 
 // add new item to make
 app.post("/postItem", (req, res) => {
-	ddb.putItem(req.body, (err) => {
+	ddb.putItem(req.body, err => {
+		if (err) {
+			res.status(500).json({ error: err.message });
+		} else {
+			console.log("Successfully added data");
+			res.json({ msg: "success" });
+		}
+	});
+});
+
+app.put("/putItem", (req, res) => {
+	console.log(req.body);
+	const putRequests = req.body.map(item => {
+		return {
+			PutRequest: item
+		};
+	});
+	console.log(putRequests);
+
+	let formattedParams = {
+		RequestItems: {
+			Crafts: putRequests
+		}
+	};
+
+	ddb.batchWriteItem(formattedParams, err => {
 		if (err) {
 			res.status(500).json({ error: err.message });
 		} else {
@@ -64,10 +91,10 @@ app.delete("/deleteItem/:craftId", (req, res) => {
 	const params = {
 		TableName: "Crafts",
 		Key: {
-			"id": { N: req.params.craftId }
+			id: { N: req.params.craftId }
 		}
 	};
-	ddb.deleteItem(params, (err) => {
+	ddb.deleteItem(params, err => {
 		err
 			? res.status(500).json({ error: err.message })
 			: console.log("deleted item");
