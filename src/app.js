@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(function (_, res, next) {
+app.use((_, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header(
 		"Access-Control-Allow-Headers",
@@ -56,6 +56,28 @@ app.post("/postItem", (req, res) => {
 	});
 });
 
+// updates an item already in database
+
+app.put("/putItem", (req, res) => {
+	const putRequests = req.body.map(item => {
+		return {
+			PutRequest: item
+		};
+	});
+
+	let formattedParams = {
+		RequestItems: {
+			Crafts: putRequests
+		}
+	};
+
+	ddb.batchWriteItem(formattedParams, err => {
+		callback(err, res);
+	});
+});
+
+
+// deleted an item
 app.delete("/deleteItem/:craftId", (req, res) => {
 	const params = {
 		TableName: "Crafts",
