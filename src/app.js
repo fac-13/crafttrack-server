@@ -45,7 +45,7 @@ app.get("/getItems", (req, res) => {
 		TableName: "Crafts"
 	};
 	ddb.scan(params, (err, data) => {
-		callback(err, res, res.json({ responseData: data }));
+		callback(err, res, () => {res.json({ responseData: data });});
 	});
 });
 
