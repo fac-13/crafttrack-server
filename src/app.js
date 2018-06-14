@@ -3,14 +3,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 
-
 // config middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(function (_, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept"
+	);
 	res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
 	next();
 });
@@ -58,7 +60,7 @@ app.delete("/deleteItem/:craftId", (req, res) => {
 	const params = {
 		TableName: "Crafts",
 		Key: {
-			"id": { N: req.params.craftId }
+			id: { N: req.params.craftId }
 		}
 	};
 	ddb.deleteItem(params, (err) => {
