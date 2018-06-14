@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(function(_, res, next) {
+app.use((_, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header(
 		"Access-Control-Allow-Headers",
@@ -30,46 +30,40 @@ AWS.config.update({
 // Create the DynamoDB service object
 const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08" });
 
+const callback = (err, res, cb) => {
+	if (err) {
+		res.status(500).json({ error: err.message });
+	} else {
+		console.log("Success");
+		cb ? cb() : res.json({ msg: "success" });
+	}
+};
+
 // getItems route
 app.get("/getItems", (req, res) => {
 	const params = {
 		TableName: "Crafts"
 	};
 	ddb.scan(params, (err, data) => {
-		if (err) {
-			console.log("Error", err);
-			res.json({
-				error: "database error"
-			});
-		} else {
-			res.json({
-				responseData: data
-			});
-			console.log("Success", data);
-		}
+		callback(err, res, res.json({ responseData: data }));
 	});
 });
 
 // add new item to make
 app.post("/postItem", (req, res) => {
-	ddb.putItem(req.body, err => {
-		if (err) {
-			res.status(500).json({ error: err.message });
-		} else {
-			console.log("Successfully added data");
-			res.json({ msg: "success" });
-		}
+	ddb.putItem(req.body, (err) => {
+		callback(err, res);
 	});
 });
 
+// updates an item already in database
+
 app.put("/putItem", (req, res) => {
-	console.log(req.body);
 	const putRequests = req.body.map(item => {
 		return {
 			PutRequest: item
 		};
 	});
-	console.log(putRequests);
 
 	let formattedParams = {
 		RequestItems: {
@@ -78,15 +72,12 @@ app.put("/putItem", (req, res) => {
 	};
 
 	ddb.batchWriteItem(formattedParams, err => {
-		if (err) {
-			res.status(500).json({ error: err.message });
-		} else {
-			console.log("Successfully added data");
-			res.json({ msg: "success" });
-		}
+		callback(err, res);
 	});
 });
 
+
+// deleted an item
 app.delete("/deleteItem/:craftId", (req, res) => {
 	const params = {
 		TableName: "Crafts",
@@ -94,18 +85,9 @@ app.delete("/deleteItem/:craftId", (req, res) => {
 			id: { N: req.params.craftId }
 		}
 	};
-	ddb.deleteItem(params, err => {
-		err
-			? res.status(500).json({ error: err.message })
-			: console.log("deleted item");
+	ddb.deleteItem(params, (err) => {
+		callback(err, res);
 	});
 });
-
-// // update item status
-// app.put("/putItemStatus", (req, res, next) => {
-//   //mark cut or sew or both as done
-//   const params = req.body.newItem;
-//   ddb.updateItem(params, (err, data) => {});
-// });
 
 module.exports = app;
