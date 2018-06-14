@@ -28,35 +28,29 @@ AWS.config.update({
 // Create the DynamoDB service object
 const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08" });
 
+const callback = (err, res, cb) => {
+	if (err) {
+		res.status(500).json({ error: err.message });
+	} else {
+		console.log("Success");
+		cb ? cb() : res.json({ msg: "success" });
+	}
+};
+
 // getItems route
 app.get("/getItems", (req, res) => {
 	const params = {
 		TableName: "Crafts"
 	};
 	ddb.scan(params, (err, data) => {
-		if (err) {
-			console.log("Error", err);
-			res.json({
-				error: "database error"
-			});
-		} else {
-			res.json({
-				responseData: data
-			});
-			console.log("Success", data);
-		}
+		callback(err, res, res.json({ responseData: data }));
 	});
 });
 
 // add new item to make
 app.post("/postItem", (req, res) => {
 	ddb.putItem(req.body, (err) => {
-		if (err) {
-			res.status(500).json({ error: err.message });
-		} else {
-			console.log("Successfully added data");
-			res.json({ msg: "success" });
-		}
+		callback(err, res);
 	});
 });
 
@@ -68,17 +62,8 @@ app.delete("/deleteItem/:craftId", (req, res) => {
 		}
 	};
 	ddb.deleteItem(params, (err) => {
-		err
-			? res.status(500).json({ error: err.message })
-			: console.log("deleted item");
+		callback(err, res);
 	});
 });
-
-// // update item status
-// app.put("/putItemStatus", (req, res, next) => {
-//   //mark cut or sew or both as done
-//   const params = req.body.newItem;
-//   ddb.updateItem(params, (err, data) => {});
-// });
 
 module.exports = app;
