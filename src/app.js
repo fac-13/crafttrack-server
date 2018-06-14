@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use((_, res, next) => {
+app.use(function (_, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header(
 		"Access-Control-Allow-Headers",
@@ -45,7 +45,7 @@ app.get("/getItems", (req, res) => {
 		TableName: "Crafts"
 	};
 	ddb.scan(params, (err, data) => {
-		callback(err, res, () => {res.json({ responseData: data });});
+		callback(err, res, () => res.json({ responseData: data }));
 	});
 });
 
